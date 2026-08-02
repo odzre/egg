@@ -1,0 +1,42 @@
+{
+    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PTERODACTYL PANEL - PTERODACTYL.IO",
+    "meta": {
+        "version": "PTDL_v2",
+        "update_url": null
+    },
+    "exported_at": "2024-05-18T12:00:00+00:00",
+    "name": "NodeJS XMPanels",
+    "author": "admin@xmpanels.com",
+    "description": "Custom NodeJS Egg dengan banner XMPanels, Bun, Python, Golang, dan tools lengkap lainnya.",
+    "features": null,
+    "docker_images": {
+        "XMPanels Custom Image": "xmpanels-node:latest"
+    },
+    "file_denylist": [],
+    "startup": "if [ -f package.json ]; then npm install; fi; node {{STARTUP_FILE}}",
+    "config": {
+        "files": "{}",
+        "startup": "{\r\n    \"done\": \"[Pterodactyl] Server is ready\"\r\n}",
+        "logs": "{}",
+        "stop": "^C"
+    },
+    "scripts": {
+        "installation": {
+            "script": "#!/bin/bash\r\napt update\r\napt install -y git curl wget\r\nmkdir -p /mnt/server\r\ncd /mnt/server\r\necho \"Installation complete.\"",
+            "container": "ubuntu:24.04",
+            "entrypoint": "bash"
+        }
+    },
+    "variables": [
+        {
+            "name": "Startup File",
+            "description": "File utama yang akan dieksekusi (contoh: index.js)",
+            "env_variable": "STARTUP_FILE",
+            "default_value": "index.js",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string",
+            "field_type": "text"
+        }
+    ]
+}
