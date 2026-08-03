@@ -13,8 +13,9 @@ jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        node_version: ["16", "18", "19", "20", "21", "22", "23", "24", "25"]
+        node_version: ["18", "20", "22", "23", "24", "25"]
     permissions:
       contents: read
       packages: write
