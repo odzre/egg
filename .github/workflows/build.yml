@@ -3,7 +3,7 @@ name: Build and Push Docker Image
 on:
   push:
     branches: [ "main", "master" ]
-  workflow_dispatch: # Memungkinkan Anda memicu build secara manual
+  workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
@@ -12,9 +12,12 @@ env:
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node_version: ["16", "18", "19", "20", "21", "22", "23", "24", "25"]
     permissions:
       contents: read
-      packages: write # Izin untuk push ke GitHub Packages (GHCR)
+      packages: write
 
     steps:
       - name: Checkout repository
@@ -27,17 +30,13 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: type=raw,value=latest
-
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            NODE_VERSION=${{ matrix.node_version }}
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:nodejs-${{ matrix.node_version }}
+            ${{ matrix.node_version == '20' && format('{0}/{1}:latest', env.REGISTRY, env.IMAGE_NAME) || '' }}
